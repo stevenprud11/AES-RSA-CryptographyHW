@@ -3,6 +3,7 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.Base64;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -46,18 +47,17 @@ class AES{
 	}
 	
 	
-	public byte[] encrypt() throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException{
+	public String encrypt() throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException{
 		Cipher ci = Cipher.getInstance("AES/CBC/PKCS5Padding"); //using Cipher encryption library, encrypt using AES/CBC/PKCS5Padding
 		ci.init(Cipher.ENCRYPT_MODE, skey, ivspec);
-		byte[] input = ptext.getBytes("UTF-8");
-		output = ci.doFinal(input);
-		return output;//return ciphertext
+		byte[] input = ptext.getBytes();//mess around to not get unrecognizable characters
+		return Base64.getEncoder().encodeToString(ci.doFinal(input));//return ciphertext
 	}
 	
-	public String decrypt(byte[] ciphertext) throws UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException{
+	public String decrypt(String ciphertext) throws UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException{
 		Cipher ci = Cipher.getInstance("AES/CBC/PKCS5Padding"); //using Cipher decryption library, decrypt using AES/CBC/PKCS5Padding
 		ci.init(Cipher.DECRYPT_MODE,  skey, ivspec);
-		return new String(ci.doFinal(ciphertext)); //return plain text
+		return new String(ci.doFinal(Base64.getDecoder().decode(ciphertext.getBytes()))); //return plain text
 	} 
 	
 	public SecretKey getKey(){ //allows bob to get shared secret key

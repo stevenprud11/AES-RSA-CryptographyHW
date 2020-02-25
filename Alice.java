@@ -1,4 +1,5 @@
 import java.security.*;
+import java.util.Base64;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -33,12 +34,13 @@ public class Alice {
 	}
 	
 	
-	public byte[] encrypt(String text) throws InvalidKeyException, IllegalBlockSizeException, BadPaddingException{
+	public String encrypt(String text) throws InvalidKeyException, IllegalBlockSizeException, BadPaddingException{
 		PublicKey bob_PB = bob.getPublicKey();//obtain bob public key
 		try {
 			Cipher ci = Cipher.getInstance("RSA/ECB/OAEPWithSHA-1AndMGF1Padding"); //RSA encryptino
 			ci.init(Cipher.ENCRYPT_MODE, bob_PB);
-			return ci.doFinal(text.getBytes()); //return cipher text
+			return Base64.getEncoder().encodeToString(ci.doFinal(text.getBytes())); //return cipher text
+			//Base64.getEncoder().encodeToString(ci.doFinal(input));
 			
 		} catch (NoSuchAlgorithmException e) {
 			// TODO Auto-generated catch block
@@ -47,7 +49,7 @@ public class Alice {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return "Error in encryption".getBytes(); //if error
+		return "Error in encryption"; //if error
 	}
 	
 	public PublicKey getPublicKey(){ //so bob can get public key if need be

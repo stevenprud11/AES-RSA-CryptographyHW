@@ -8,7 +8,10 @@ import java.nio.file.Paths;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.time.Instant;
 
 import javax.crypto.BadPaddingException;
@@ -40,6 +43,11 @@ class WriteFile{
 		print_line.printf("%s" + "%n", textLine);
 		print_line.close();
 	}
+	
+	public String readFromFile() throws IOException{
+		BufferedReader br = new BufferedReader(new FileReader(path));
+		return br.readLine();
+	}
 }
 
 
@@ -60,13 +68,13 @@ public class HW3 {
 		String m = kb.nextLine(); //read in message
 		AES aes128 = new AES(m, 128); //create AES object with 128 bit key
 		Instant starts = Instant.now(); //start encryption timer
-		byte[] output = aes128.encrypt(); //encrypt message
+		String output = aes128.encrypt(); //encrypt message
 		System.out.println("AES 128 bit key encryption time:: " + starts.getNano()); //print time
 		try {
 			System.out.println("CipherText:: " + new String(output)); //print cipher text
 			AESTest.writeToFile(new String(output)); //write file of encrypted message
 			starts = Instant.now(); //start decryption timer
-			System.out.println("PlainText:: " + aes128.decrypt(output)); //print decrypted message 
+			System.out.println("PlainText:: " + aes128.decrypt(AESTest.readFromFile())); //print decrypted message 
 			System.out.println("AES 128 bit key decryption time::" + starts.getNano()); //print time
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -84,7 +92,7 @@ public class HW3 {
 			System.out.println("CipherText:: " + new String(output));
 			AESTest.writeToFile(new String(output));
 			starts = Instant.now();
-			System.out.println("PlainText:: " + aes192.decrypt(output));
+			System.out.println("PlainText:: " + aes192.decrypt(AESTest.readFromFile()));
 			System.out.println("AES 192 bit key decryption time::" + starts.getNano());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -102,7 +110,7 @@ public class HW3 {
 			System.out.println("CipherText:: " + new String(output));
 			AESTest.writeToFile(new String(output));
 			starts = Instant.now();
-			System.out.println("PlainText:: " + aes256.decrypt(output));
+			System.out.println("PlainText:: " + aes256.decrypt(AESTest.readFromFile()));
 			System.out.println("AES 192 bit key decryption time::" + starts.getNano());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -125,7 +133,7 @@ public class HW3 {
 		Alice alice = new Alice(bob, 1024); //create alice with 1024 bit public and private key pass bob to her for her to grab his public key
 		m = kb.nextLine();//input string
 		starts = Instant.now();//start encryption timer
-		byte[] ctext = alice.encrypt(m);//encrypt message
+		String ctext = alice.encrypt(m);//encrypt message
 		System.out.println("RSA 1024 bit key encryption time:: " + starts.getNano());//print encryption time
 		System.out.println("CipherText:: " + new String(ctext));//print ciphertext
 		try {
@@ -135,7 +143,7 @@ public class HW3 {
 			e.printStackTrace();
 		}
 		starts = Instant.now();//start decryption timer
-		System.out.println("PlainText:: " + new String (bob.decrypt(ctext)));//decrypt cipher text
+		System.out.println("PlainText:: " + new String (bob.decrypt(RSATest.readFromFile())));//decrypt cipher text
 		System.out.println("RSA 1024 bit key decryption time::" + starts.getNano());//print decryption time
 
 		
@@ -155,7 +163,7 @@ public class HW3 {
 			e.printStackTrace();
 		}
 		starts = Instant.now();
-		System.out.println("PlainText:: " + new String (bob.decrypt(ctext)));
+		System.out.println("PlainText:: " + new String (bob.decrypt(RSATest.readFromFile())));
 		System.out.println("RSA 2048 bit key decryption time::" + starts.getNano());
 
 		
@@ -175,7 +183,7 @@ public class HW3 {
 			e.printStackTrace();
 		}
 		starts = Instant.now();
-		System.out.println("PlainText:: " + new String (bob.decrypt(ctext)));
+		System.out.println("PlainText:: " + new String (bob.decrypt(RSATest.readFromFile())));
 		System.out.println("RSA 4096 bit key decryption time::" + starts.getNano());
 
 	}

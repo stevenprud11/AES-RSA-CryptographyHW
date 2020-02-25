@@ -41,11 +41,11 @@ public class Bob {
 		}
 	}
 	
-	public byte[] decrypt(byte[] ctext) throws InvalidKeyException, IllegalBlockSizeException, BadPaddingException, IOException{
+	public String decrypt(String ctext) throws InvalidKeyException, IllegalBlockSizeException, BadPaddingException, IOException{
 		try {//decrypt message using bob private key
 			Cipher ci = Cipher.getInstance("RSA/ECB/OAEPWithSHA-1AndMGF1Padding");
 			ci.init(Cipher.DECRYPT_MODE, privateKey);
-			return ci.doFinal(ctext);//return plaintext
+			return new String(ci.doFinal(Base64.getDecoder().decode(ctext.getBytes())));//return plaintext
 			
 		} catch (NoSuchAlgorithmException e) {
 			// TODO Auto-generated catch block
@@ -54,7 +54,7 @@ public class Bob {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return "Error in decryption".getBytes();//if error
+		return "Error in decryption";//if error
 	}
 	
 	public PublicKey getPublicKey(){//allows people sending bob a message to grab his public key
